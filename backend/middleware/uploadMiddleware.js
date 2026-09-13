@@ -63,6 +63,23 @@ const usarCloudinary = () => {
     );
 };
 
+const guardarLocal = (archivo) => {
+    return new Promise((resolve, reject) => {
+        const extension = path.extname(archivo.originalname || ".jpg");
+        const nombre = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extension}`;
+        const ruta = path.join(uploadsDir, nombre);
+
+        fs.writeFile(ruta, archivo.buffer, (error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+
+            resolve(ruta);
+        });
+    });
+};
+
 const subirACLOUDINARY = (archivo) => {
     return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -100,7 +117,26 @@ const upload = {
                     req.file.url = resultado.secure_url;
                     req.file.filename = resultado.public_id;
                 } catch (uploadError) {
-                    return next(uploadError);
+                    console.warn(
+                        "Cloudinary falló, guardando la imagen localmente:",
+                        uploadError?.message || uploadError
+                    );
+
+                    try {
+                        const rutaLocal = await guardarLocal(req.file);
+                        const nombreArchivo = path.basename(rutaLocal);
+                        const rutaPublica = `/uploads/${nombreArchivo}`;
+
+                        req.file.path = rutaPublica;
+                        req.file.url = `http://localhost:${process.env.PORT || 3000}${rutaPublica}`;
+                        req.file.filename = nombreArchivo;
+                    } catch (localError) {
+                        return next(
+                            new Error(
+                                `No se pudo subir la imagen ni a Cloudinary ni localmente: ${localError.message}`
+                            )
+                        );
+                    }
                 }
             }
 
