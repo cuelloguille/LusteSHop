@@ -36,8 +36,10 @@ function Home() {
     const [error, setError] = useState("");
     const [imagenAmpliada, setImagenAmpliada] = useState(null);
     const [toast, setToast] = useState(null);
+    const [ideaCliente, setIdeaCliente] = useState("");
 
     const location = useLocation();
+    const numeroWhatsApp = "5493584026789";
 
     const [usuario, setUsuario] = useState(() => {
         return JSON.parse(
@@ -122,6 +124,12 @@ function Home() {
 
         navigate("/");
     };
+
+    const whatsappIdeaUrl = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(
+        ideaCliente.trim()
+            ? `Hola, quiero compartir mi idea:\n\n${ideaCliente.trim()}`
+            : "Hola, quiero compartir mi idea para LusteShop."
+    )}`;
 
     return (
         <div className="home-page">
@@ -382,6 +390,55 @@ function Home() {
 
                     </div>
 
+                </section>
+
+                {/* MANDANOS TU IDEA */}
+
+                <section className="idea-section">
+                    <div className="idea-card">
+                        <div className="idea-copy">
+                            <span className="section-label">
+                                CLIENTES
+                            </span>
+
+                            <h2>
+                                Mándanos tu idea
+                            </h2>
+
+                            <p>
+                                Contanos qué producto, estilo o concepto
+                                te gustaría ver en LusteShop. Estamos
+                                atentos para convertir tu idea en algo
+                                real.
+                            </p>
+                        </div>
+
+                        <div className="idea-form">
+                            <label htmlFor="idea-cliente">
+                                Tu idea
+                            </label>
+
+                            <textarea
+                                id="idea-cliente"
+                                value={ideaCliente}
+                                onChange={(event) =>
+                                    setIdeaCliente(event.target.value)
+                                }
+                                placeholder="Ej: Quiero una colección con productos para cocina moderna y color beige..."
+                                rows="5"
+                            />
+
+                            <a
+                                href={whatsappIdeaUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="primary-button idea-button"
+                            >
+                                Mándanos tu idea
+                                <span>→</span>
+                            </a>
+                        </div>
+                    </div>
                 </section>
 
                 {/* PRODUCTOS */}

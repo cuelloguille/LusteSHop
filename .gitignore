@@ -1,0 +1,14 @@
+# Environment files
+.env
+.env.*
+backend/.env
+frontend/.env
+
+# Node / build artifacts
+node_modules/
+dist/
+build/
+coverage/
+
+# Logs
+*.log
