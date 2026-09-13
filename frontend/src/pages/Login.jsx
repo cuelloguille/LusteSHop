@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { iniciarSesion } from "../services/authService";
 
 function Login() {
@@ -24,14 +24,22 @@ function Login() {
 
             window.dispatchEvent(new Event("usuario-cambio"));
 
-            alert("Inicio de sesión correcto");
-
             if (data.usuario?.rol === "admin") {
-                navigate("/admin", { replace: true });
+                navigate("/admin", {
+                    replace: true,
+                    state: {
+                        mensaje: `Bienvenido ${data.usuario.nombre}`
+                    }
+                });
                 return;
             }
 
-            navigate("/", { replace: true });
+            navigate("/", {
+                replace: true,
+                state: {
+                    mensaje: `Bienvenido ${data.usuario.nombre}`
+                }
+            });
 
         } catch (error) {
             setError(error.message);
@@ -39,34 +47,67 @@ function Login() {
     };
 
     return (
-        <div>
-            <h1>Iniciar sesión</h1>
+        <div className="page-shell">
+            <div className="page-container auth-layout">
+                <div className="auth-visual">
+                    <div className="auth-brand">
+                        <span className="auth-brand-mark">L</span>
+                        <span>LusteShop</span>
+                    </div>
 
-            <form onSubmit={manejarLogin}>
+                    <div>
+                        <p className="page-eyebrow" style={{ color: "#f0dfe2" }}>
+                            BIENVENIDO
+                        </p>
+                        <h2>Ingresá a tu cuenta</h2>
+                    </div>
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
+                    <p>
+                        Comprá rápido, guardá tus favoritos y seguí el estado de tus pedidos desde un solo lugar.
+                    </p>
 
-                <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
+                    <div className="auth-badges">
+                        <span className="auth-badge">SEGURA</span>
+                        <span className="auth-badge">RÁPIDA</span>
+                        <span className="auth-badge">FÁCIL</span>
+                    </div>
+                </div>
 
-                <button type="submit">
-                    Iniciar sesión
-                </button>
+                <div className="auth-card">
+                    <p className="page-eyebrow">INICIAR SESIÓN</p>
+                    <h1 className="page-title" style={{ marginBottom: "24px" }}>Hola de nuevo</h1>
 
-            </form>
+                    <form className="form-grid" onSubmit={manejarLogin}>
+                        <input
+                            className="input-field"
+                            type="text"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
 
-            {error && <p>{error}</p>}
+                        <input
+                            className="input-field"
+                            type="password"
+                            placeholder="Contraseña"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+
+                        <button className="button-primary" type="submit">
+                            Iniciar sesión
+                        </button>
+                    </form>
+
+                    {error && <div className="form-error">{error}</div>}
+
+                    <div style={{ marginTop: "20px", color: "#6d726d" }}>
+                        ¿No tenés cuenta? <Link to="/registro" className="inline-link">Registrate</Link>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

@@ -42,6 +42,11 @@ const obtenerImagenUrl = async (req, productoActual = null) => {
             await eliminarArchivoImagen(productoActual.imagen_url);
         }
 
+        if (req.file.path && req.file.path.includes("/uploads/")) {
+            const relativePath = req.file.path.split("/uploads/").pop();
+            return `/uploads/${relativePath}`;
+        }
+
         return req.file.path || req.file.url || `http://localhost:3000/uploads/${req.file.filename}`;
     }
 

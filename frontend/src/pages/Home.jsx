@@ -1,15 +1,43 @@
 
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCarrito } from "../context/CarritoContext";
 import "./css/Home.css";
+import heroImage from "../../../img/WhatsApp Image 2026-09-06 at 1.31.50 PM.jpeg";
 
 const API_BASE_URL =
     import.meta.env.VITE_API_URL || "http://localhost:3000";
 
+const obtenerUrlImagen = (imagenUrl) => {
+    if (!imagenUrl) return "";
+
+    if (imagenUrl.startsWith("blob:") || imagenUrl.startsWith("data:")) {
+        return "";
+    }
+
+    if (imagenUrl.startsWith("http")) {
+        return imagenUrl;
+    }
+
+    if (imagenUrl.includes("/uploads/")) {
+        const nombreArchivo = imagenUrl.split("/uploads/").pop();
+        return `${API_BASE_URL}/uploads/${nombreArchivo}`;
+    }
+
+    if (imagenUrl.startsWith("/uploads/")) {
+        return `${API_BASE_URL}${imagenUrl}`;
+    }
+
+    return imagenUrl;
+};
+
 function Home() {
     const [productos, setProductos] = useState([]);
     const [error, setError] = useState("");
+    const [imagenAmpliada, setImagenAmpliada] = useState(null);
+    const [toast, setToast] = useState(null);
+
+    const location = useLocation();
 
     const [usuario, setUsuario] = useState(() => {
         return JSON.parse(
@@ -52,6 +80,39 @@ function Home() {
 
         cargarProductos();
     }, []);
+
+    useEffect(() => {
+        if (location.state?.mensaje) {
+            setToast({
+                type: "success",
+                text: location.state.mensaje
+            });
+
+            const timeoutId = setTimeout(() => {
+                setToast(null);
+            }, 2600);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [location.state]);
+
+    useEffect(() => {
+        if (!toast) return;
+
+        const timeoutId = setTimeout(() => {
+            setToast(null);
+        }, 2600);
+
+        return () => clearTimeout(timeoutId);
+    }, [toast]);
+
+    const manejarAgregarAlCarrito = (producto) => {
+        agregarAlCarrito(producto);
+        setToast({
+            type: "cart",
+            text: `${producto.nombre} agregado al carrito`
+        });
+    };
 
     const cerrarSesion = () => {
         localStorage.removeItem("token");
@@ -155,7 +216,8 @@ function Home() {
                                     className="logout-button"
                                     onClick={cerrarSesion}
                                 >
-                                    Cerrar sesión
+                                    <span className="logout-icon">↩</span>
+                                    <span>Cerrar sesión</span>
                                 </button>
 
                             </div>
@@ -232,9 +294,11 @@ function Home() {
 
                             </div>
 
-                            <div className="hero-card-circle">
-                                L
-                            </div>
+                            <img
+                                className="hero-card-image"
+                                src={heroImage}
+                                alt="Productos de LusteShop"
+                            />
 
                             <div className="hero-card-bottom">
 
@@ -371,6 +435,18 @@ function Home() {
 
                                 <div className="product-card-accent"></div>
 
+                                {producto.imagen_url && (
+                                    <div className="product-image-wrapper">
+                                        <img
+                                            className="product-image"
+                                            src={obtenerUrlImagen(producto.imagen_url)}
+                                            alt={producto.nombre}
+                                            onDoubleClick={() => setImagenAmpliada(producto)}
+                                            title="Haz doble clic para ampliar"
+                                        />
+                                    </div>
+                                )}
+
                                 <div className="product-content">
 
                                     <div className="product-number">
@@ -428,7 +504,7 @@ function Home() {
                                     <button
                                         className="add-button"
                                         onClick={() =>
-                                            agregarAlCarrito(
+                                            manejarAgregarAlCarrito(
                                                 producto
                                             )
                                         }
@@ -462,6 +538,46 @@ function Home() {
                 </section>
 
             </main>
+
+            {imagenAmpliada && (
+                <div
+                    className="image-zoom-overlay"
+                    onClick={() => setImagenAmpliada(null)}
+                >
+                    <div
+                        className="image-zoom-modal"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <button
+                            className="zoom-close-button"
+                            onClick={() => setImagenAmpliada(null)}
+                            aria-label="Cerrar imagen ampliada"
+                        >
+                            ×
+                        </button>
+
+                        <img
+                            className="zoomed-product-image"
+                            src={obtenerUrlImagen(imagenAmpliada.imagen_url)}
+                            alt={imagenAmpliada.nombre}
+                        />
+
+                        <div className="zoom-product-info">
+                            <h3>{imagenAmpliada.nombre}</h3>
+                            <p>{imagenAmpliada.descripcion}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {toast && (
+                <div className={`floating-toast ${toast.type}`}>
+                    <span className="toast-icon">
+                        {toast.type === "success" ? "✓" : "🛒"}
+                    </span>
+                    <span>{toast.text}</span>
+                </div>
+            )}
 
             {/* FOOTER */}
 

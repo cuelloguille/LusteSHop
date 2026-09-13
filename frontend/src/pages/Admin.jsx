@@ -216,7 +216,11 @@ function Admin() {
                 formData.append("imagen", formulario.imagen_archivo);
             } else if (editandoId && formulario.imagen_url === "") {
                 formData.append("imagen_url", "");
-            } else if (formulario.imagen_url) {
+            } else if (
+                formulario.imagen_url &&
+                !formulario.imagen_url.startsWith("blob:") &&
+                !formulario.imagen_url.startsWith("data:")
+            ) {
                 formData.append("imagen_url", formulario.imagen_url);
             }
 
@@ -390,350 +394,310 @@ function Admin() {
     };
 
     if (cargando) {
-        return <p>Cargando...</p>;
+        return (
+            <div className="page-shell">
+                <div className="page-container" style={{ maxWidth: "760px" }}>
+                    <div className="page-card" style={{ padding: "36px" }}>
+                        <p className="page-eyebrow">ADMIN</p>
+                        <h1 className="page-title">Cargando panel...</h1>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (!autorizado) {
         return (
-            <div>
-                <h1>Panel de administración</h1>
-                <p>{error}</p>
-                <button onClick={() => navigate("/")}>
-                    Volver al inicio
-                </button>
+            <div className="page-shell">
+                <div className="page-container" style={{ maxWidth: "760px" }}>
+                    <div className="page-card" style={{ padding: "36px" }}>
+                        <p className="page-eyebrow">ADMIN</p>
+                        <h1 className="page-title">Acceso restringido</h1>
+                        <p className="page-subtitle" style={{ margin: "12px 0 22px" }}>{error}</p>
+                        <button className="button-primary" onClick={() => navigate("/")}>
+                            Volver al inicio
+                        </button>
+                    </div>
+                </div>
             </div>
         );
     }
 
     return (
-        <div>
+        <div className="admin-shell">
+            <div className="admin-container">
+                <div className="admin-header">
+                    <div>
+                        <p className="page-eyebrow">ADMIN</p>
+                        <h1 className="page-title">Panel de administración</h1>
+                    </div>
 
-            <h1>Panel de administración</h1>
-
-            {error && (
-                <p>❌ {error}</p>
-            )}
-
-            <button onClick={abrirNuevoProducto}>
-                + Nuevo producto
-            </button>
-
-            {" "}
-
-            <button onClick={abrirNuevaCategoria}>
-                + Nueva categoría
-            </button>
-
-            <br />
-            <br />
-
-            {mostrarCategoriaFormulario && (
-                <div>
-                    <h2>
-                        {editandoCategoriaId
-                            ? "Editar categoría"
-                            : "Nueva categoría"}
-                    </h2>
-
-                    <form onSubmit={guardarCategoria}>
-                        <input
-                            type="text"
-                            name="nombre"
-                            placeholder="Nombre de la categoría"
-                            value={categoriaFormulario.nombre}
-                            onChange={(e) =>
-                                setCategoriaFormulario({
-                                    ...categoriaFormulario,
-                                    nombre: e.target.value
-                                })
-                            }
-                            required
-                        />
-
-                        <br />
-
-                        <textarea
-                            name="descripcion"
-                            placeholder="Descripción"
-                            value={categoriaFormulario.descripcion}
-                            onChange={(e) =>
-                                setCategoriaFormulario({
-                                    ...categoriaFormulario,
-                                    descripcion: e.target.value
-                                })
-                            }
-                        />
-
-                        <br />
-
-                        <button type="submit">
-                            {editandoCategoriaId
-                                ? "Guardar cambios"
-                                : "Crear categoría"}
+                    <div className="admin-actions">
+                        <button className="button-primary" onClick={abrirNuevoProducto}>
+                            + Nuevo producto
                         </button>
-
-                        {" "}
-
-                        <button
-                            type="button"
-                            onClick={() => {
-                                limpiarFormularioCategoria();
-                                setMostrarCategoriaFormulario(false);
-                            }}
-                        >
-                            Cancelar
+                        <button className="button-secondary" onClick={abrirNuevaCategoria}>
+                            + Nueva categoría
                         </button>
-                    </form>
-
-                    <br />
+                    </div>
                 </div>
-            )}
 
-            {mostrarFormulario && (
-                <div>
+                {error && <div className="form-error">❌ {error}</div>}
 
-                    <h2>
-                        {editandoId
-                            ? "Editar producto"
-                            : "Nuevo producto"}
-                    </h2>
+                {mostrarCategoriaFormulario && (
+                    <div className="admin-card admin-section">
+                        <div className="admin-section-header">
+                            <h2>
+                                {editandoCategoriaId ? "Editar categoría" : "Nueva categoría"}
+                            </h2>
+                        </div>
 
-                    <form onSubmit={guardarProducto}>
+                        <form className="admin-form" onSubmit={guardarCategoria}>
+                            <input
+                                className="admin-input"
+                                type="text"
+                                name="nombre"
+                                placeholder="Nombre de la categoría"
+                                value={categoriaFormulario.nombre}
+                                onChange={(e) =>
+                                    setCategoriaFormulario({
+                                        ...categoriaFormulario,
+                                        nombre: e.target.value
+                                    })
+                                }
+                                required
+                            />
 
-                        <input
-                            type="text"
-                            name="nombre"
-                            placeholder="Nombre"
-                            value={formulario.nombre}
-                            onChange={manejarCambio}
-                            required
-                        />
+                            <textarea
+                                className="admin-textarea"
+                                name="descripcion"
+                                placeholder="Descripción"
+                                value={categoriaFormulario.descripcion}
+                                onChange={(e) =>
+                                    setCategoriaFormulario({
+                                        ...categoriaFormulario,
+                                        descripcion: e.target.value
+                                    })
+                                }
+                            />
 
-                        <br />
+                            <div className="admin-actions">
+                                <button type="submit" className="button-primary">
+                                    {editandoCategoriaId ? "Guardar cambios" : "Crear categoría"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="button-secondary"
+                                    onClick={() => {
+                                        limpiarFormularioCategoria();
+                                        setMostrarCategoriaFormulario(false);
+                                    }}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
 
-                        <textarea
-                            name="descripcion"
-                            placeholder="Descripción"
-                            value={formulario.descripcion}
-                            onChange={manejarCambio}
-                        />
+                {mostrarFormulario && (
+                    <div className="admin-card admin-section">
+                        <div className="admin-section-header">
+                            <h2>
+                                {editandoId ? "Editar producto" : "Nuevo producto"}
+                            </h2>
+                        </div>
 
-                        <br />
+                        <form className="admin-form" onSubmit={guardarProducto}>
+                            <div className="admin-form-grid">
+                                <input
+                                    className="admin-input"
+                                    type="text"
+                                    name="nombre"
+                                    placeholder="Nombre"
+                                    value={formulario.nombre}
+                                    onChange={manejarCambio}
+                                    required
+                                />
 
-                        <input
-                            type="number"
-                            name="precio"
-                            placeholder="Precio"
-                            value={formulario.precio}
-                            onChange={manejarCambio}
-                            min="0"
-                            step="0.01"
-                            required
-                        />
+                                <select
+                                    className="admin-select"
+                                    name="categoria_id"
+                                    value={formulario.categoria_id}
+                                    onChange={manejarCambio}
+                                    required
+                                >
+                                    <option value="">Seleccioná una categoría</option>
+                                    {categorias.map((categoria) => (
+                                        <option key={categoria.id} value={categoria.id}>
+                                            {categoria.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                        <br />
+                            <textarea
+                                className="admin-textarea"
+                                name="descripcion"
+                                placeholder="Descripción"
+                                value={formulario.descripcion}
+                                onChange={manejarCambio}
+                            />
 
-                        <input
-                            type="number"
-                            name="stock"
-                            placeholder="Stock"
-                            value={formulario.stock}
-                            onChange={manejarCambio}
-                            min="0"
-                            required
-                        />
+                            <div className="admin-form-grid">
+                                <input
+                                    className="admin-input"
+                                    type="number"
+                                    name="precio"
+                                    placeholder="Precio"
+                                    value={formulario.precio}
+                                    onChange={manejarCambio}
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                />
 
-                        <br />
+                                <input
+                                    className="admin-input"
+                                    type="number"
+                                    name="stock"
+                                    placeholder="Stock"
+                                    value={formulario.stock}
+                                    onChange={manejarCambio}
+                                    min="0"
+                                    required
+                                />
+                            </div>
 
-                        <input
-                            type="file"
-                            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                            onChange={(e) => {
-                                const archivo = e.target.files?.[0] || null;
+                            <div>
+                                <input
+                                    className="admin-input"
+                                    type="file"
+                                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                                    onChange={(e) => {
+                                        const archivo = e.target.files?.[0] || null;
 
-                                setFormulario({
-                                    ...formulario,
-                                    imagen_archivo: archivo,
-                                    imagen_url: archivo
-                                        ? URL.createObjectURL(archivo)
-                                        : formulario.imagen_url
-                                });
-                            }}
-                        />
-
-                        <br />
-
-                        {formulario.imagen_url && (
-                            <>
-                                <img
-                                    src={obtenerUrlImagen(formulario.imagen_url)}
-                                    alt="Vista previa"
-                                    style={{
-                                        width: "120px",
-                                        height: "120px",
-                                        objectFit: "cover",
-                                        display: "block",
-                                        marginBottom: "10px"
+                                        setFormulario({
+                                            ...formulario,
+                                            imagen_archivo: archivo,
+                                            imagen_url: archivo
+                                                ? URL.createObjectURL(archivo)
+                                                : formulario.imagen_url
+                                        });
                                     }}
                                 />
 
+                                {formulario.imagen_url && (
+                                    <div className="admin-preview">
+                                        <img
+                                            src={obtenerUrlImagen(formulario.imagen_url)}
+                                            alt="Vista previa"
+                                        />
+                                        <button type="button" className="admin-danger-button" onClick={quitarImagen}>
+                                            Quitar imagen
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="admin-actions">
+                                <button type="submit" className="button-primary">
+                                    {editandoId ? "Guardar cambios" : "Crear producto"}
+                                </button>
                                 <button
                                     type="button"
-                                    onClick={quitarImagen}
-                                    style={{ marginBottom: "10px" }}
+                                    className="button-secondary"
+                                    onClick={() => {
+                                        limpiarFormulario();
+                                        setMostrarFormulario(false);
+                                    }}
                                 >
-                                    Quitar imagen
+                                    Cancelar
                                 </button>
-                            </>
-                        )}
+                            </div>
+                        </form>
+                    </div>
+                )}
 
-                        <br />
+                <div className="admin-card admin-section">
+                    <div className="admin-section-header">
+                        <h2>Categorías</h2>
+                    </div>
 
-                        <label>
-                            Categoría:
-                        </label>
-
-                        <br />
-
-                        <select
-                            name="categoria_id"
-                            value={formulario.categoria_id}
-                            onChange={manejarCambio}
-                            required
-                        >
-                            <option value="">
-                                Seleccioná una categoría
-                            </option>
-
+                    {categorias.length === 0 ? (
+                        <div className="admin-empty">No hay categorías cargadas.</div>
+                    ) : (
+                        <div className="admin-list">
                             {categorias.map((categoria) => (
-                                <option
-                                    key={categoria.id}
-                                    value={categoria.id}
-                                >
-                                    {categoria.nombre}
-                                </option>
+                                <div className="admin-item" key={categoria.id}>
+                                    <div className="admin-item-content">
+                                        <h3>{categoria.nombre}</h3>
+                                        <p>{categoria.descripcion || "Sin descripción"}</p>
+                                    </div>
+
+                                    <div></div>
+
+                                    <div className="admin-item-actions">
+                                        <button className="admin-mini-button" onClick={() => editarCategoria(categoria)}>
+                                            Editar
+                                        </button>
+                                        <button className="admin-danger-button" onClick={() => eliminarCategoria(categoria.id)}>
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                </div>
                             ))}
-                        </select>
-
-                        <br />
-                        <br />
-
-                        <button type="submit">
-                            {editandoId
-                                ? "Guardar cambios"
-                                : "Crear producto"}
-                        </button>
-
-                        {" "}
-
-                        <button
-                            type="button"
-                            onClick={() => {
-                                limpiarFormulario();
-                                setMostrarFormulario(false);
-                            }}
-                        >
-                            Cancelar
-                        </button>
-
-                    </form>
-
-                </div>
-            )}
-
-            <hr />
-
-            <h2>Categorías</h2>
-
-            {categorias.map((categoria) => (
-                <div key={categoria.id}>
-                    <h3>{categoria.nombre}</h3>
-                    <p>{categoria.descripcion || "Sin descripción"}</p>
-
-                    <button onClick={() => editarCategoria(categoria)}>
-                        Editar
-                    </button>
-
-                    {" "}
-
-                    <button onClick={() => eliminarCategoria(categoria.id)}>
-                        Eliminar
-                    </button>
-
-                    <hr />
-                </div>
-            ))}
-
-            <hr />
-
-            <h2>Productos</h2>
-
-            {productos.map((producto) => (
-                <div key={producto.id}>
-
-                    {producto.imagen_url && (
-                        <img
-                            src={obtenerUrlImagen(producto.imagen_url)}
-                            alt={producto.nombre}
-                            style={{
-                                width: "120px",
-                                height: "120px",
-                                objectFit: "cover",
-                                display: "block"
-                            }}
-                        />
+                        </div>
                     )}
-
-                    <h3>
-                        {producto.nombre}
-                    </h3>
-
-                    <p>
-                        {producto.descripcion}
-                    </p>
-
-                    <p>
-                        Precio: $
-                        {Number(producto.precio).toFixed(2)}
-                    </p>
-
-                    <p>
-                        Stock: {producto.stock}
-                    </p>
-
-                    <p>
-                        Categoría:{" "}
-                        {
-                            categorias.find(
-                                (categoria) =>
-                                    categoria.id === producto.categoria_id
-                            )?.nombre
-                        }
-                    </p>
-
-                    <button
-                        onClick={() =>
-                            editarProducto(producto)
-                        }
-                    >
-                        Editar
-                    </button>
-
-                    {" "}
-
-                    <button
-                        onClick={() =>
-                            eliminarProducto(producto.id)
-                        }
-                    >
-                        Eliminar
-                    </button>
-
-                    <hr />
-
                 </div>
-            ))}
 
+                <div className="admin-card admin-section">
+                    <div className="admin-section-header">
+                        <h2>Productos</h2>
+                    </div>
+
+                    {productos.length === 0 ? (
+                        <div className="admin-empty">No hay productos cargados.</div>
+                    ) : (
+                        <div className="admin-list">
+                            {productos.map((producto) => (
+                                <div className="admin-item" key={producto.id}>
+                                    {producto.imagen_url && (
+                                        <img
+                                            className="admin-item-image"
+                                            src={obtenerUrlImagen(producto.imagen_url)}
+                                            alt={producto.nombre}
+                                        />
+                                    )}
+
+                                    {!producto.imagen_url && (
+                                        <div className="admin-item-image" style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#8a918c", fontSize: "12px" }}>
+                                            SIN IMAGEN
+                                        </div>
+                                    )}
+
+                                    <div className="admin-item-content">
+                                        <h3>{producto.nombre}</h3>
+                                        <p>{producto.descripcion || "Sin descripción"}</p>
+                                        <p><strong>Precio:</strong> ${Number(producto.precio).toFixed(2)}</p>
+                                        <p><strong>Stock:</strong> {producto.stock}</p>
+                                        <p><strong>Categoría:</strong> {categorias.find((categoria) => categoria.id === producto.categoria_id)?.nombre || "Sin categoría"}</p>
+                                    </div>
+
+                                    <div className="admin-item-actions">
+                                        <button className="admin-mini-button" onClick={() => editarProducto(producto)}>
+                                            Editar
+                                        </button>
+                                        <button className="admin-danger-button" onClick={() => eliminarProducto(producto.id)}>
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

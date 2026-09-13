@@ -1,0 +1,20 @@
+                                          Table "public.usuarios"
+     Column     |            Type             | Collation | Nullable |               Default                
+----------------+-----------------------------+-----------+----------+--------------------------------------
+ id             | integer                     |           | not null | nextval('usuarios_id_seq'::regclass)
+ nombre         | character varying(100)      |           | not null | 
+ apellido       | character varying(100)      |           | not null | 
+ email          | character varying(150)      |           | not null | 
+ password       | character varying(255)      |           | not null | 
+ telefono       | character varying(30)       |           |          | 
+ direccion      | character varying(255)      |           |          | 
+ ciudad         | character varying(100)      |           |          | 
+ codigo_postal  | character varying(20)       |           |          | 
+ rol            | character varying(20)       |           | not null | 'cliente'::character varying
+ fecha_creacion | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+Indexes:
+    "usuarios_pkey" PRIMARY KEY, btree (id)
+    "usuarios_email_key" UNIQUE CONSTRAINT, btree (email)
+Referenced by:
+    TABLE "pedidos" CONSTRAINT "pedidos_usuario_id_fkey" FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+

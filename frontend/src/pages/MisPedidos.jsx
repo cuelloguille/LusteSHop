@@ -44,62 +44,54 @@ function MisPedidos() {
 
     if (cargando) {
         return (
-            <div>
-                <h1>Mis compras</h1>
-                <p>Cargando pedidos...</p>
+            <div className="page-shell">
+                <div className="page-container" style={{ maxWidth: "760px" }}>
+                    <div className="page-card" style={{ padding: "36px" }}>
+                        <p className="page-eyebrow">MIS COMPRAS</p>
+                        <h1 className="page-title">Cargando pedidos...</h1>
+                    </div>
+                </div>
             </div>
         );
     }
 
     return (
-        <div>
-            <h1>Mis compras</h1>
-
-            {error && (
-                <p>
-                    ❌ {error}
-                </p>
-            )}
-
-            {!error && pedidos.length === 0 && (
-                <div>
-                    <p>
-                        Todavía no realizaste ninguna compra.
-                    </p>
-
-                    <Link to="/">
-                        Ir a la tienda
-                    </Link>
+        <div className="page-shell">
+            <div className="page-container" style={{ maxWidth: "960px" }}>
+                <div className="page-header">
+                    <div>
+                        <p className="page-eyebrow">MIS COMPRAS</p>
+                        <h1 className="page-title">Tus pedidos</h1>
+                    </div>
+                    <Link to="/" className="button-link">← Seguir comprando</Link>
                 </div>
-            )}
 
-            {pedidos.map((pedido) => (
-                <div key={pedido.id}>
+                {error && <div className="form-error">❌ {error}</div>}
 
-                    <h2>
-                        Pedido #{pedido.id}
-                    </h2>
+                {!error && pedidos.length === 0 && (
+                    <div className="page-card" style={{ padding: "36px" }}>
+                        <p className="page-subtitle" style={{ marginBottom: "20px" }}>
+                            Todavía no realizaste ninguna compra.
+                        </p>
+                        <Link to="/" className="button-primary">Ir a la tienda</Link>
+                    </div>
+                )}
 
-                    <p>
-                        Total: $
-                        {Number(pedido.total).toFixed(2)}
-                    </p>
-
-                    <p>
-                        Estado: {pedido.estado}
-                    </p>
-
-                    <p>
-                        Fecha:{" "}
-                        {new Date(
-                            pedido.fecha_creacion
-                        ).toLocaleString()}
-                    </p>
-
-                    <hr />
-
+                <div className="card-list">
+                    {pedidos.map((pedido) => (
+                        <div className="card-item" key={pedido.id}>
+                            <div>
+                                <strong>Pedido #{pedido.id}</strong>
+                                <span>Estado: {pedido.estado}</span>
+                            </div>
+                            <div style={{ textAlign: "right" }}>
+                                <strong>${Number(pedido.total).toFixed(2)}</strong>
+                                <span>{new Date(pedido.fecha_creacion).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            ))}
+            </div>
         </div>
     );
 }

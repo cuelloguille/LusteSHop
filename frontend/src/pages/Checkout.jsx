@@ -75,20 +75,16 @@ function Checkout() {
                 );
             }
 
-            // Guardamos los datos necesarios
             setWhatsappUrl(data.whatsappUrl);
             setNumeroPedido(data.pedido.id);
 
-            // Vaciamos el carrito
             vaciarCarrito();
 
-            // Guardamos el último pedido
             localStorage.setItem(
                 "ultimoPedido",
                 JSON.stringify(data)
             );
 
-            // Mostramos confirmación
             setPedidoConfirmado(true);
 
         } catch (error) {
@@ -98,157 +94,113 @@ function Checkout() {
         }
     };
 
-    // PANTALLA DE PEDIDO CONFIRMADO
     if (pedidoConfirmado) {
         return (
-            <div>
-                <h1>✅ Pedido confirmado</h1>
+            <div className="page-shell">
+                <div className="page-container" style={{ maxWidth: "760px" }}>
+                    <div className="page-card" style={{ padding: "36px" }}>
+                        <p className="page-eyebrow">PEDIDO CONFIRMADO</p>
+                        <h1 className="page-title" style={{ marginBottom: "10px" }}>✅ Pedido realizado</h1>
 
-                <h2>
-                    Pedido #{numeroPedido}
-                </h2>
+                        <h2 style={{ margin: "0 0 10px" }}>Pedido #{numeroPedido}</h2>
+                        <p className="page-subtitle" style={{ marginBottom: "20px" }}>
+                            Tu pedido fue registrado correctamente.
+                        </p>
 
-                <p>
-                    Tu pedido fue registrado correctamente.
-                </p>
-
-                
-
-                <br />
-
-                <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <button>
-                        📱 Enviar pedido por WhatsApp
-                    </button>
-                </a>
-
-                <br />
-                <br />
-
-                <button onClick={() => navigate("/")}>
-                    Volver al inicio
-                </button>
+                        <div className="form-actions" style={{ justifyContent: "flex-start", marginTop: "24px" }}>
+                            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="button-primary">
+                                📱 Enviar por WhatsApp
+                            </a>
+                            <button className="button-secondary" onClick={() => navigate("/")}>
+                                Volver al inicio
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 
-    // CARRITO VACÍO
     if (carrito.length === 0) {
         return (
-            <div>
-                <h1>Checkout</h1>
-
-                <p>
-                    No hay productos en el carrito.
-                </p>
-
-                <Link to="/">
-                    Volver a la tienda
-                </Link>
+            <div className="page-shell">
+                <div className="page-container" style={{ maxWidth: "760px" }}>
+                    <div className="page-card" style={{ padding: "36px" }}>
+                        <p className="page-eyebrow">CHECKOUT</p>
+                        <h1 className="page-title" style={{ marginBottom: "12px" }}>Tu carrito está vacío</h1>
+                        <p className="page-subtitle" style={{ marginBottom: "20px" }}>
+                            No hay productos en el carrito.
+                        </p>
+                        <Link to="/" className="button-primary">Volver a la tienda</Link>
+                    </div>
+                </div>
             </div>
         );
     }
 
-    // CHECKOUT
     return (
-        <div>
+        <div className="page-shell">
+            <div className="page-container" style={{ maxWidth: "1180px" }}>
+                <div className="page-header">
+                    <div>
+                        <p className="page-eyebrow">CHECKOUT</p>
+                        <h1 className="page-title">Finalizar compra</h1>
+                    </div>
+                    <Link to="/carrito" className="button-link">← Volver al carrito</Link>
+                </div>
 
-            <h1>Finalizar compra</h1>
+                <div className="auth-layout" style={{ alignItems: "start" }}>
+                    <div className="auth-card">
+                        <form className="form-grid" onSubmit={confirmarPedido}>
+                            <div>
+                                <h2 style={{ margin: "0 0 16px" }}>Datos del cliente</h2>
+                                <div className="form-grid two-columns">
+                                    <input className="input-field" type="text" name="nombre" placeholder="Nombre" value={formulario.nombre} onChange={manejarCambio} required />
+                                    <input className="input-field" type="text" name="apellido" placeholder="Apellido" value={formulario.apellido} onChange={manejarCambio} required />
+                                </div>
+                            </div>
 
-            <form onSubmit={confirmarPedido}>
+                            <div className="form-grid two-columns">
+                                <input className="input-field" type="email" name="email" placeholder="Email" value={formulario.email} onChange={manejarCambio} required />
+                                <input className="input-field" type="text" name="telefono" placeholder="Teléfono" value={formulario.telefono} onChange={manejarCambio} required />
+                            </div>
 
-                <h2>Datos del cliente</h2>
+                            <div>
+                                <h2 style={{ margin: "0 0 16px" }}>Datos de envío</h2>
+                                <input className="input-field" type="text" name="direccion" placeholder="Dirección" value={formulario.direccion} onChange={manejarCambio} required />
+                            </div>
 
-                <input
-                    type="text"
-                    name="nombre"
-                    placeholder="Nombre"
-                    value={formulario.nombre}
-                    onChange={manejarCambio}
-                    required
-                />
+                            <div className="form-grid two-columns">
+                                <input className="input-field" type="text" name="ciudad" placeholder="Ciudad" value={formulario.ciudad} onChange={manejarCambio} required />
+                                <input className="input-field" type="text" name="codigo_postal" placeholder="Código postal" value={formulario.codigo_postal} onChange={manejarCambio} required />
+                            </div>
 
-                <input
-                    type="text"
-                    name="apellido"
-                    placeholder="Apellido"
-                    value={formulario.apellido}
-                    onChange={manejarCambio}
-                    required
-                />
+                            {error && <div className="form-error">{error}</div>}
 
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formulario.email}
-                    onChange={manejarCambio}
-                    required
-                />
+                            <button className="button-primary" type="submit" disabled={cargando}>
+                                {cargando ? "Procesando..." : "Confirmar pedido"}
+                            </button>
+                        </form>
+                    </div>
 
-                <input
-                    type="text"
-                    name="telefono"
-                    placeholder="Teléfono"
-                    value={formulario.telefono}
-                    onChange={manejarCambio}
-                    required
-                />
+                    <aside className="summary-card">
+                        <p className="page-eyebrow">RESUMEN</p>
+                        <h2 style={{ margin: "0 0 20px" }}>Tu pedido</h2>
 
-                <h2>Datos de envío</h2>
+                        {carrito.map((producto) => (
+                            <div key={producto.id} className="summary-row">
+                                <span>{producto.nombre} x {producto.cantidad}</span>
+                                <span>${(Number(producto.precio) * producto.cantidad).toFixed(2)}</span>
+                            </div>
+                        ))}
 
-                <input
-                    type="text"
-                    name="direccion"
-                    placeholder="Dirección"
-                    value={formulario.direccion}
-                    onChange={manejarCambio}
-                    required
-                />
-
-                <input
-                    type="text"
-                    name="ciudad"
-                    placeholder="Ciudad"
-                    value={formulario.ciudad}
-                    onChange={manejarCambio}
-                    required
-                />
-
-                <input
-                    type="text"
-                    name="codigo_postal"
-                    placeholder="Código postal"
-                    value={formulario.codigo_postal}
-                    onChange={manejarCambio}
-                    required
-                />
-
-                <h2>
-                    Total: ${precioTotal.toFixed(2)}
-                </h2>
-
-                {error && (
-                    <p>
-                        ❌ {error}
-                    </p>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={cargando}
-                >
-                    {cargando
-                        ? "Procesando..."
-                        : "Confirmar pedido"}
-                </button>
-
-            </form>
-
+                        <div className="summary-row total">
+                            <span>Total</span>
+                            <strong>${precioTotal.toFixed(2)}</strong>
+                        </div>
+                    </aside>
+                </div>
+            </div>
         </div>
     );
 }
