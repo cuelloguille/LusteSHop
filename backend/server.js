@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const pool = require("./config/database");
 
 const productoRoutes = require("./routes/productoRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -80,6 +81,17 @@ app.use("/api/pedidos", pedidoRoutes);
 app.use("/api/categorias", categoriaRoutes);
 
 // Iniciar servidor
-app.listen(PORT, () => {
-    console.log(`Servidor funcionando en el puerto ${PORT}`);
-});
+const startServer = async () => {
+    try {
+        await pool.initializeDatabase();
+
+        app.listen(PORT, () => {
+            console.log(`Servidor funcionando en el puerto ${PORT}`);
+        });
+    } catch (error) {
+        console.error("No se pudo iniciar el servidor:", error);
+        process.exit(1);
+    }
+};
+
+startServer();
