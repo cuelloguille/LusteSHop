@@ -15,7 +15,7 @@ function MisPedidos() {
             return;
         }
 
-        fetch("http://localhost:3000/api/pedidos/mis-pedidos", {
+        fetch("https://lusteshop-backend.onrender.com/api/pedidos/mis-pedidos", {
             headers: {
                 Authorization: `Bearer ${token}`
             }

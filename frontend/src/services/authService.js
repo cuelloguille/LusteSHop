@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api/auth";
+const API_URL = "https://lusteshop-backend.onrender.com/api/auth";
 
 // Registrar usuario
 export const registrarUsuario = async (datos) => {

@@ -53,7 +53,7 @@ function Checkout() {
             }));
 
             const respuesta = await fetch(
-                "http://localhost:3000/api/pedidos",
+                "https://lusteshop-backend.onrender.com/api/pedidos",
                 {
                     method: "POST",
                     headers: {
