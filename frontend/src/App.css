@@ -258,6 +258,75 @@ select {
   border: 1px solid #dfeae1;
 }
 
+.auth-helper-row {
+  margin-top: 18px;
+}
+
+.password-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(180deg, #f8f7f5 0%, #f2eee9 100%);
+}
+
+.password-card {
+  width: min(560px, 100%);
+  background: #ffffff;
+  border: 1px solid #ececea;
+  border-radius: 28px;
+  box-shadow: 0 15px 40px rgba(32, 42, 36, 0.06);
+  padding: 36px;
+}
+
+.password-card h1 {
+  margin: 0 0 10px;
+  font-size: clamp(32px, 4vw, 42px);
+  letter-spacing: -1.4px;
+}
+
+.password-card p {
+  margin: 0 0 22px;
+  color: #6d726d;
+  line-height: 1.6;
+}
+
+.password-form {
+  display: grid;
+  gap: 18px;
+}
+
+.reset-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  background: #f5f1ee;
+  border: 1px solid #ece8e3;
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: #55615a;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-visual {
+    min-height: auto;
+    padding: 26px 22px;
+  }
+
+  .auth-card,
+  .password-card {
+    padding: 24px 20px;
+  }
+}
+
+
 .form-error {
   background: #fdf2f4;
   color: #a14a57;

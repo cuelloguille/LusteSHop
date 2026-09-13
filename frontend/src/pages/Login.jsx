@@ -103,6 +103,10 @@ function Login() {
 
                     {error && <div className="form-error">{error}</div>}
 
+                    <div className="auth-helper-row">
+                        <Link to="/recuperar-password" className="inline-link">¿Olvidaste tu contraseña?</Link>
+                    </div>
+
                     <div style={{ marginTop: "20px", color: "#6d726d" }}>
                         ¿No tenés cuenta? <Link to="/registro" className="inline-link">Registrate</Link>
                     </div>

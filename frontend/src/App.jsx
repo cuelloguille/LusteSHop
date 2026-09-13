@@ -15,6 +15,8 @@ import Checkout from "./pages/Checkout";
 import PedidoConfirmado from "./pages/PedidoConfirmado";
 import MisPedidos from "./pages/MisPedidos";
 import Admin from "./pages/Admin";
+import RecuperarPassword from "./pages/RecuperarPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
     const [usuario, setUsuario] = useState(() => {
@@ -43,7 +45,7 @@ function App() {
         };
     }, []);
 
-    const esAdmin = usuario?.rol === "admin";
+    const esAdmin = String(usuario?.rol || "").toLowerCase() === "admin";
 
     return (
         <BrowserRouter>
@@ -58,6 +60,16 @@ function App() {
                 <Route
                     path="/login"
                     element={<Login />}
+                />
+
+                <Route
+                    path="/recuperar-password"
+                    element={<RecuperarPassword />}
+                />
+
+                <Route
+                    path="/reset-password"
+                    element={<ResetPassword />}
                 />
 
                 <Route

@@ -4,7 +4,7 @@ const pool = require("../config/database");
 const buscarUsuarioPorEmail = async (email) => {
     const resultado = await pool.query(
         `SELECT * FROM usuarios
-         WHERE email = $1`,
+         WHERE LOWER(email) = LOWER($1)`,
         [email]
     );
 
@@ -22,6 +22,8 @@ const crearUsuario = async (
     ciudad,
     codigo_postal
 ) => {
+    const emailNormalizado = String(email).trim().toLowerCase();
+
     const resultado = await pool.query(
         `INSERT INTO usuarios
         (
@@ -49,7 +51,7 @@ const crearUsuario = async (
         [
             nombre,
             apellido,
-            email,
+            emailNormalizado,
             password,
             telefono,
             direccion,
@@ -61,7 +63,20 @@ const crearUsuario = async (
     return resultado.rows[0];
 };
 
+const actualizarPasswordPorEmail = async (email, password) => {
+    const resultado = await pool.query(
+        `UPDATE usuarios
+         SET password = $2
+         WHERE email = $1
+         RETURNING id, email`,
+        [email, password]
+    );
+
+    return resultado.rows[0];
+};
+
 module.exports = {
     buscarUsuarioPorEmail,
-    crearUsuario
+    crearUsuario,
+    actualizarPasswordPorEmail
 };
