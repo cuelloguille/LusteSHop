@@ -10,8 +10,10 @@ const pedidoRoutes = require("./routes/pedidoRoutes");
 const categoriaRoutes = require("./routes/categoriaRoutes");
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
+// Orígenes permitidos
 const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
@@ -19,43 +21,65 @@ const allowedOrigins = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5174",
     "http://127.0.0.1:5175",
-    process.env.FRONTEND_URL
-].filter(Boolean);
+    "https://lusteshop-frontend.onrender.com"
+];
 
-const isAllowedOrigin = (origin) => {
-    if (!origin) return true;
+// Agregar FRONTEND_URL si existe
+if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
 
-    if (allowedOrigins.includes(origin)) {
-        return true;
-    }
+// Configuración CORS
+app.use(
+    cors({
+        origin: function (origin, callback) {
 
-    return /^(http:\/\/)(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+)(:\d+)?$/.test(origin);
-};
+            // Permitir solicitudes sin origin
+            // (por ejemplo Postman o algunas herramientas)
+            if (!origin) {
+                return callback(null, true);
+            }
 
-app.use(cors({
-    origin: (origin, callback) => {
-        if (isAllowedOrigin(origin)) {
-            callback(null, true);
-            return;
-        }
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
 
-        callback(new Error("No permitido por CORS"));
-    },
-    credentials: true
-}));
+            console.log("Origen bloqueado por CORS:", origin);
+
+            return callback(new Error("No permitido por CORS"));
+        },
+
+        credentials: true,
+
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
+);
+
+// Middleware para recibir JSON
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Carpeta de imágenes
+app.use(
+    "/uploads",
+    express.static(path.join(__dirname, "uploads"))
+);
+
+// Ruta principal
 app.get("/", (req, res) => {
     res.json({
         mensaje: "Backend funcionando correctamente"
     });
 });
 
+// Rutas API
 app.use("/api/productos", productoRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/pedidos", pedidoRoutes);
 app.use("/api/categorias", categoriaRoutes);
+
+// Iniciar servidor
 app.listen(PORT, () => {
-    console.log(`Servidor funcionando en http://localhost:${PORT}`);
+    console.log(`Servidor funcionando en el puerto ${PORT}`);
 });
