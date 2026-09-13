@@ -193,6 +193,25 @@ function Home() {
                             </span>
                         </Link>
 
+                        {!usuario && (
+                            <Link
+                                to="/login"
+                                className="mobile-login-link"
+                            >
+                                Iniciar sesión
+                            </Link>
+                        )}
+
+                        {usuario && (
+                            <button
+                                type="button"
+                                className="mobile-logout-button"
+                                onClick={cerrarSesion}
+                            >
+                                Cerrar sesión
+                            </button>
+                        )}
+
                     </nav>
 
                     <div className="navbar-account">

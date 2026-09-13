@@ -311,6 +311,16 @@ select {
 }
 
 @media (max-width: 700px) {
+  .page-shell {
+    padding: 28px 16px;
+  }
+
+  .page-header,
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .auth-layout {
     grid-template-columns: 1fr;
   }
@@ -324,8 +334,49 @@ select {
   .password-card {
     padding: 24px 20px;
   }
+
+  .form-grid.two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .button-primary,
+  .button-secondary,
+  .button-link {
+    width: 100%;
+  }
 }
 
+@media (max-width: 480px) {
+  .page-shell {
+    padding: 22px 12px;
+  }
+
+  .page-title {
+    font-size: 30px;
+  }
+
+  .auth-brand {
+    font-size: 18px;
+  }
+
+  .auth-visual h2 {
+    font-size: 28px;
+  }
+
+  .auth-badges {
+    gap: 8px;
+  }
+
+  .auth-badge {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+  }
+}
 
 .form-error {
   background: #fdf2f4;
