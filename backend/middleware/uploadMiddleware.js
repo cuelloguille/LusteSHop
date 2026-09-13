@@ -56,7 +56,10 @@ const usarCloudinary = () => {
     return Boolean(
         process.env.CLOUDINARY_CLOUD_NAME &&
         process.env.CLOUDINARY_API_KEY &&
-        process.env.CLOUDINARY_API_SECRET
+        process.env.CLOUDINARY_API_SECRET &&
+        process.env.CLOUDINARY_CLOUD_NAME !== "tu_cloud_name" &&
+        process.env.CLOUDINARY_API_KEY !== "tu_api_key" &&
+        process.env.CLOUDINARY_API_SECRET !== "tu_api_secret"
     );
 };
 
