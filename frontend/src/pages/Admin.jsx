@@ -6,6 +6,10 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 const obtenerUrlImagen = (imagenUrl) => {
     if (!imagenUrl) return "";
 
+    if (imagenUrl.startsWith("blob:") || imagenUrl.startsWith("data:")) {
+        return imagenUrl;
+    }
+
     if (imagenUrl.startsWith("http")) {
         return imagenUrl;
     }
@@ -29,6 +33,7 @@ function Admin() {
     const [mostrarCategoriaFormulario, setMostrarCategoriaFormulario] = useState(false);
     const [editandoId, setEditandoId] = useState(null);
     const [editandoCategoriaId, setEditandoCategoriaId] = useState(null);
+    const [previewImagenUrl, setPreviewImagenUrl] = useState("");
     const navigate = useNavigate();
 
     const [formulario, setFormulario] = useState({
@@ -113,6 +118,14 @@ function Admin() {
         cargarDatos();
     }, [navigate]);
 
+    useEffect(() => {
+        return () => {
+            if (previewImagenUrl.startsWith("blob:")) {
+                URL.revokeObjectURL(previewImagenUrl);
+            }
+        };
+    }, [previewImagenUrl]);
+
     const manejarCambio = (e) => {
         setFormulario({
             ...formulario,
@@ -121,6 +134,10 @@ function Admin() {
     };
 
     const limpiarFormulario = () => {
+        if (previewImagenUrl.startsWith("blob:")) {
+            URL.revokeObjectURL(previewImagenUrl);
+        }
+
         setFormulario({
             nombre: "",
             descripcion: "",
@@ -131,6 +148,7 @@ function Admin() {
             imagen_archivo: null
         });
 
+        setPreviewImagenUrl("");
         setEditandoId(null);
     };
 
@@ -154,6 +172,10 @@ function Admin() {
     };
 
     const editarProducto = (producto) => {
+        if (previewImagenUrl.startsWith("blob:")) {
+            URL.revokeObjectURL(previewImagenUrl);
+        }
+
         setFormulario({
             nombre: producto.nombre,
             descripcion: producto.descripcion || "",
@@ -166,16 +188,23 @@ function Admin() {
             imagen_archivo: null
         });
 
+        setPreviewImagenUrl(producto.imagen_url || "");
         setEditandoId(producto.id);
         setMostrarFormulario(true);
     };
 
     const quitarImagen = () => {
+        if (previewImagenUrl.startsWith("blob:")) {
+            URL.revokeObjectURL(previewImagenUrl);
+        }
+
         setFormulario({
             ...formulario,
             imagen_url: "",
             imagen_archivo: null
         });
+
+        setPreviewImagenUrl("");
     };
 
     const editarCategoria = (categoria) => {
@@ -577,20 +606,25 @@ function Admin() {
                                     onChange={(e) => {
                                         const archivo = e.target.files?.[0] || null;
 
+                                        if (previewImagenUrl.startsWith("blob:")) {
+                                            URL.revokeObjectURL(previewImagenUrl);
+                                        }
+
+                                        const nuevaPreview = archivo ? URL.createObjectURL(archivo) : "";
+
+                                        setPreviewImagenUrl(nuevaPreview);
                                         setFormulario({
                                             ...formulario,
                                             imagen_archivo: archivo,
-                                            imagen_url: archivo
-                                                ? URL.createObjectURL(archivo)
-                                                : formulario.imagen_url
+                                            imagen_url: archivo ? "" : formulario.imagen_url
                                         });
                                     }}
                                 />
 
-                                {formulario.imagen_url && (
+                                {(previewImagenUrl || formulario.imagen_url) && (
                                     <div className="admin-preview">
                                         <img
-                                            src={obtenerUrlImagen(formulario.imagen_url)}
+                                            src={obtenerUrlImagen(previewImagenUrl || formulario.imagen_url)}
                                             alt="Vista previa"
                                         />
                                         <button type="button" className="admin-danger-button" onClick={quitarImagen}>
