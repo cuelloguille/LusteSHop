@@ -64,7 +64,7 @@ app.use(express.json());
 // Carpeta de imágenes
 app.use(
     "/uploads",
-    express.static(path.join(__dirname, "uploads"))
+    express.static(path.join(__dirname, "ml_default"))
 );
 
 // Ruta principal
