@@ -443,7 +443,7 @@ function Home() {
                                 onChange={(event) =>
                                     setIdeaCliente(event.target.value)
                                 }
-                                placeholder="Ej: Quiero una colección con productos para cocina moderna y color beige..."
+                                placeholder="Quiero algo que represente lo ordenado y atento que soy en la ofi"
                                 rows="5"
                             />
 
